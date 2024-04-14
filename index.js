@@ -7,6 +7,11 @@ const path = require('path');
 require('dotenv').config();
 const fs = require('fs');
 const { execSync } = require('child_process');
+var RateLimit = require('express-rate-limit');
+var limiter = RateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // max 100 requests per windowMs
+});
 
 const app = express();
 const server = http.createServer(app);
@@ -16,6 +21,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(limiter);
 const proxyPort =  'http://localhost:' + process.env.BACKEND_PORT;
 const packageJsonPath = './client/package.json';
 const packageJson = require(packageJsonPath);
