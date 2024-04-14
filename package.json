@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "fs": "^0.0.1-security",
+    "mongoose": "^8.3.1",
+    "nodemon": "^3.1.0",
+    "socket.io": "^4.7.5",
+    "uuid": "^9.0.1"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "start:dev": "nodemon index.js",
+    "client": "npm start --prefix client",
+    "client:install": "npm install --prefix client",
+    "dev": "concurrently \"npm run start:dev\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
