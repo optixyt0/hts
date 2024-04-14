@@ -5,6 +5,8 @@ const socketIo = require('socket.io');
 const { v4: uuidV4 } = require('uuid');
 const path = require('path');
 require('dotenv').config();
+const fs = require('fs');
+const { execSync } = require('child_process');
 
 const app = express();
 const server = http.createServer(app);
@@ -14,6 +16,21 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+const proxyPort =  'http://localhost:' + process.env.BACKEND_PORT;
+const packageJsonPath = './client/package.json';
+const packageJson = require(packageJsonPath);
+packageJson.proxy = proxyPort;
+fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+
+// Set the path to the client directory
+const clientPath = path.join(__dirname, 'client');
+
+try {
+    // Run the command in the client directory
+    execSync('npm run start:network', { stdio: 'inherit', cwd: clientPath });
+} catch (error) {
+    console.error('Failed to start the React app:', error);
+}
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
@@ -56,7 +73,7 @@ io.on('connection', socket => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.BACKEND_PORT || 2000;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
